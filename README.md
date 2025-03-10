@@ -1,4 +1,4 @@
-# UnixMidtermProject
+# UnixMidtermServer
 This is a mid term project for a Unix System Administration course.
 
 # Overview
