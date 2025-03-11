@@ -1,0 +1,10 @@
+{
+    "user": 0.0,
+    "system": 50.0,
+    "lower_priority_processes": 0.0,
+    "idle": 50.0,
+    "waiting_for_IO": 0.0,
+    "hardware_interrupts": 0.0,
+    "software_interrupts": 0.0,
+    "steal_time": 0.0
+}

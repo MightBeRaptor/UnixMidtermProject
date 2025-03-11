@@ -14,14 +14,6 @@ touch "$filename"
 top -bn1 | grep "Cpu(s)" >> "$filename"
 # Expected data
 # %Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-# us = user
-# sy = system
-# ni = lower priority processes
-# id = idle
-# wa = waiting for I/O
-# hi = hardware interrupts
-# si = software interrupts
-# st = steal time
 
 # MEMORY
 free -m | grep -E "total|Mem:" >> "$filename"
