@@ -55,6 +55,7 @@ with open(metrics_path, 'r') as f:
             cpu_lines += line
 
     # CPU
+    data['cpu'] = dict()
     cpu_lines = cpu_lines.split('%Cpu(s):')[1].strip()
     cpu_data = cpu_lines.split(',') # ['0.0 us', '50.0 sy', ..]
     for element in cpu_data:
@@ -62,7 +63,8 @@ with open(metrics_path, 'r') as f:
         value = element.split(' ')[0] # '0.0'
         code = element.split(' ')[1] # 'us'
         code_string = cpu_code_map[code] # 'user'
-        data[code_string] = float(value)
+        data['cpu'][code_string] = float(value)
+
 
 
 
