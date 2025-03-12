@@ -38,30 +38,12 @@ cpu_code_map = {
     'si': 'Software Interrupts',
     'st': 'Steal Time'
 }
-cpu_line = None
-mem_lines = []
-disk_lines = []
-disk_io_lines = []
-network_lines = []
+cpu_line = lines[0] #l1
+mem_lines = lines[1:3] # l2, l3
+disk_lines = lines[3:6] # l4, l5, l6
+disk_io_lines = lines[6:8] # l7, l8
+network_lines = lines[8:11] # l9, l10, l11
 
-previous_line = None
-for line in lines:
-    if line.startswith('%Cpu(s):'):
-        cpu_lines = line
-    if line.startswith('Mem:'):
-        # Add previous line
-        if previous_line is None:
-            raise ValueError('Memory data was found, but with no column data in a preceding line')
-        mem_lines.append(previous_line)
-        mem_lines.append(line)
-    if line.startswith('Filesystem') or line.startswith('/dev/sda1') and not line.startswith('/dev/sda15'):
-        disk_lines.append(line)
-    if line.startswith('Device') or line.startswith('sda'):
-        disk_io_lines.append(line)
-
-    previous_line = line
-
-network_lines = lines[-3:] #last 3
 
 # CPU
 # Expected data
@@ -75,8 +57,8 @@ network_lines = lines[-3:] #last 3
 #            }
 # }
 data['CPU'] = dict()
-cpu_lines = cpu_lines.split('%Cpu(s):')[1].strip()
-cpu_data = cpu_lines.split(',') # ['0.0 us', '50.0 sy', ..]
+cpu_line = cpu_line.split('%Cpu(s):')[1].strip()
+cpu_data = cpu_line.split(',') # ['0.0 us', '50.0 sy', ..]
 for element in cpu_data:
     element = element.strip() # '0.0 us'
     value = element.split(' ')[0] # '0.0'
@@ -209,7 +191,6 @@ for i, unit in enumerate(units): # ['KB/s', 'in', 'KB/s', 'out'] -> ['KB/s incom
         units.pop(i)
 
 values = network_lines[2].strip().split() # '0.00 0.00' -> ['0.00', '0.00']
-print(ens, units, values)
 
 if not (len(units) == len(values)):
     raise ValueError('Number of ens''s, units, and values are not equal for Network data')
