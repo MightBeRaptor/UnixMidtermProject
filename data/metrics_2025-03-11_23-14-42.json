@@ -1,12 +1,20 @@
 {
-    "cpu": {
-        "user": 0.0,
-        "system": 50.0,
-        "lower_priority_processes": 0.0,
-        "idle": 50.0,
-        "waiting_for_IO": 0.0,
-        "hardware_interrupts": 0.0,
-        "software_interrupts": 0.0,
-        "steal_time": 0.0
+    "CPU": {
+        "User": 0.0,
+        "System": 50.0,
+        "Lower Priority Processes": 0.0,
+        "Idle": 50.0,
+        "Waiting for Input/Output": 0.0,
+        "Hardware Interrupts": 0.0,
+        "Software Interrupts": 0.0,
+        "Steal Time": 0.0
+    },
+    "Memory": {
+        "Total": 969,
+        "Used": 469,
+        "Free": 208,
+        "Shared": 0,
+        "Buffer/Cache": 442,
+        "Available": 500
     }
 }
