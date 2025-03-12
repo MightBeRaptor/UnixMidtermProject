@@ -25,82 +25,95 @@ data = dict()
 with open(metrics_path, 'r') as f:
     lines = f.readlines()
 
-    cpu_code_map = {
-        'us': 'User',
-        'sy': 'System',
-        'ni': 'Lower Priority Processes',
-        'id': 'Idle',
-        'wa': 'Waiting for Input/Output',
-        'hi': 'Hardware Interrupts',
-        'si': 'Software Interrupts',
-        'st': 'Steal Time'
-    }
-    cpu_line = None
-    mem_lines = []
+if len(lines) == 0:
+    raise ValueError('No data found in the metrics file')
 
-    previous_line = None
-    for line in lines:
-        if line.startswith('%Cpu(s):'):
-            cpu_lines = line
-        if line.startswith('Mem:'):
-            # Add previous line
-            if previous_line is None:
-                raise ValueError('Memory data was found, but with no column data in a preceding line')
-            mem_lines.append(previous_line)
-            mem_lines.append(line)
+cpu_code_map = {
+    'us': 'User',
+    'sy': 'System',
+    'ni': 'Lower Priority Processes',
+    'id': 'Idle',
+    'wa': 'Waiting for Input/Output',
+    'hi': 'Hardware Interrupts',
+    'si': 'Software Interrupts',
+    'st': 'Steal Time'
+}
+cpu_line = None
+mem_lines = []
+disk_lines = []
 
-        previous_line = line
+previous_line = None
+for line in lines:
+    if line.startswith('%Cpu(s):'):
+        cpu_lines = line
+    if line.startswith('Mem:'):
+        # Add previous line
+        if previous_line is None:
+            raise ValueError('Memory data was found, but with no column data in a preceding line')
+        mem_lines.append(previous_line)
+        mem_lines.append(line)
+    if line.startswith('Filesystem') or line.startswith('/dev/sda1') and not line.startswith('/dev/sda15'):
+        disk_lines.append(line)
 
-    # CPU
-    # Expected data
-    # %Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
 
-    # parse into
-    # {
-    #     'cpu': {
-    #               'user': 0.0,
-    #               'system': 0.0, ...
-    #            }
-    # }
-    data['CPU'] = dict()
-    cpu_lines = cpu_lines.split('%Cpu(s):')[1].strip()
-    cpu_data = cpu_lines.split(',') # ['0.0 us', '50.0 sy', ..]
-    for element in cpu_data:
-        element = element.strip() # '0.0 us'
-        value = element.split(' ')[0] # '0.0'
-        code = element.split(' ')[1] # 'us'
-        code_string = cpu_code_map[code] # 'user'
-        data['CPU'][code_string] = float(value)
 
-    # Memory
-    # Expected data
-    #                total        used        free      shared  buff/cache   available
-    # Mem:             969         469         208           0         442         500
+    previous_line = line
+
+# CPU
+# Expected data
+# %Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+
+# parse into
+# {
+#     'cpu': {
+#               'user': 0.0,
+#               'system': 0.0, ...
+#            }
+# }
+data['CPU'] = dict()
+cpu_lines = cpu_lines.split('%Cpu(s):')[1].strip()
+cpu_data = cpu_lines.split(',') # ['0.0 us', '50.0 sy', ..]
+for element in cpu_data:
+    element = element.strip() # '0.0 us'
+    value = element.split(' ')[0] # '0.0'
+    code = element.split(' ')[1] # 'us'
+    code_string = cpu_code_map[code] # 'user'
+    data['CPU'][code_string] = float(value)
+
+# Memory
+# Expected data
+#                total        used        free      shared  buff/cache   available
+# Mem:             969         469         208           0         442         500
+
+# parse into
+# {
+#    'memory': {
+#                 'total': 969,
+#              }
+# }
+data['Memory'] = dict()
+column_headers = mem_lines[0].strip().split() #' total used free ' -> ['total', 'used', 'free']
+values = mem_lines[1].strip().split('Mem:')[1].strip().split() #'Mem: 969 469' -> ['969', '469']
+if len(column_headers) != len(values):
+    raise ValueError('Number of columns does not match number of values for memory data')
+mem_code_map = {
+    'total': 'Total',
+    'used': 'Used',
+    'free': 'Free',
+    'shared': 'Shared',
+    'buff/cache': 'Buffer/Cache',
+    'available': 'Available'
+}
+for i in range(len(column_headers)):
+    header_code = column_headers[i]
+    header_str = mem_code_map[header_code]
+    value = int(values[i])
+    data['Memory'][header_str] = value
+
+# Disk
+print(disk_lines)
+
     
-    # parse into
-    # {
-    #    'memory': {
-    #                 'total': 969,
-    #              }
-    # }
-    data['Memory'] = dict()
-    column_headers = mem_lines[0].strip().split() #' total used free ' -> ['total', 'used', 'free']
-    values = mem_lines[1].strip().split('Mem:')[1].strip().split() #'Mem: 969 469' -> ['969', '469']
-    if len(column_headers) != len(values):
-        raise ValueError('Number of columns does not match number of values for memory data')
-    mem_code_map = {
-        'total': 'Total',
-        'used': 'Used',
-        'free': 'Free',
-        'shared': 'Shared',
-        'buff/cache': 'Buffer/Cache',
-        'available': 'Available'
-    }
-    for i in range(len(column_headers)):
-        header_code = column_headers[i]
-        header_str = mem_code_map[header_code]
-        value = int(values[i])
-        data['Memory'][header_str] = value
 
 
 
