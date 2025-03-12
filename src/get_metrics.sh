@@ -5,7 +5,7 @@ sudo apt install sysstat -y
 sudo apt install ifstat -y
 
 # Store the time in a variable
-filename="metrics_$(date +'%Y-%m-%d_%H-%M-%S').txt"
+filename="../data/metrics_$(date +'%Y-%m-%d_%H-%M-%S').txt"
 
 # Get metrics
 touch "$filename"
