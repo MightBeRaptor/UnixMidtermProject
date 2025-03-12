@@ -23,7 +23,7 @@ free -m | grep -E "total|Mem:" >> "$filename"
 #Swap:              0           0           0
 
 # DISK
-df -h | grep "sda 1 " >> "$filename"
+df -h | grep -E "Filesystem|sda" >> "$filename"
 # Expected data:
 # /dev/sda1        9.7G 2.7G   6.5G   30% /
 
