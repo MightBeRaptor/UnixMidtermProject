@@ -7,6 +7,9 @@ sudo apt install ifstat -y
 # Store the time in a variable
 filename="../data/metrics_$(date +'%Y-%m-%d_%H-%M-%S').txt"
 
+# Ensure the directory exists
+mkdir -p ../data
+
 # Get metrics
 touch "$filename"
 
