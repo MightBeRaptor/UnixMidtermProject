@@ -25,7 +25,9 @@ free -m | grep -E "total|Mem:" >> "$filename"
 # DISK
 df -h | grep -E "Filesystem|sda" >> "$filename"
 # Expected data:
-# /dev/sda1        9.7G 2.7G   6.5G   30% /
+# Filesystem      Size  Used Avail Use% Mounted on
+# /dev/sda1       9.7G  2.7G  6.5G  30% /
+# /dev/sda15      124M   12M  113M  10% /boot/efi
 
 # DISK I/O
 iostat -dx 1 1 | grep -E "Device|sda" >> "$filename"

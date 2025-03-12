@@ -111,9 +111,20 @@ for i in range(len(column_headers)):
     data['Memory'][header_str] = value
 
 # Disk
+# Expected data:
+# /dev/sda1        9.7G 2.7G   6.5G   30% /
+# /dev/sda15       124M  7.8M  116M    7% /boot/efi
+
+# parse into
+# {
+#     'Disk': {
+#                'Size': '9.7G',
+#                'Used': '2.7G',
+#             }
+# }
 data['Disk'] = dict()
-column_headers = disk_lines[0].replace('Mounted on', 'Mounted-on').strip().split() # 'Filesystem Size Used' -> ['Size', 'Used']
-value_headers = disk_lines[1].strip().split() # '/dev/sda1  20G  10G' -> ['20G', '10G']
+column_headers = disk_lines[0].replace('Mounted on', 'Mounted-on').strip().split() # 'Filesystem Size Used' -> ['Filesystem', 'Size', 'Used']
+value_headers = disk_lines[1].strip().split() # '/dev/sda1  20G  10G' -> ['/dev/sda1', '20G', '10G']
 for i in range(len(column_headers)):
     header_str = column_headers[i]
     if header_str in ['Mounted-on', 'Filesystem']:
