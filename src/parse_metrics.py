@@ -51,12 +51,12 @@ network_lines = lines[8:11] # l9, l10, l11
 
 # parse into
 # {
-#     'cpu': {
+#     '%CPU(s)': {
 #               'user': 0.0,
 #               'system': 0.0, ...
 #            }
 # }
-data['CPU'] = dict()
+data['%CPU(s)'] = dict()
 cpu_line = cpu_line.split('%Cpu(s):')[1].strip()
 cpu_data = cpu_line.split(',') # ['0.0 us', '50.0 sy', ..]
 for element in cpu_data:
@@ -64,7 +64,7 @@ for element in cpu_data:
     value = element.split(' ')[0] # '0.0'
     code = element.split(' ')[1] # 'us'
     code_string = cpu_code_map[code] # 'user'
-    data['CPU'][code_string] = float(value)
+    data['%CPU(s)'][code_string] = float(value)
 
 # Memory
 # Expected data
@@ -162,7 +162,7 @@ for i in range(len(column_headers)):
     if header_code in ['Device']:
         continue #skip
     header_str = disk_io_code_map[header_code]
-    value = values[i]
+    value = float(values[i])
     data['Disk I/O'][header_str] = value
 
 # Network
@@ -202,7 +202,7 @@ for i in range(len(ens)):
     units_per_ens = int(int(len(units))/int(len(ens)))
     for j in range(units_per_ens):
         header_str = f'{ens[i]} {units[j]}'
-        value = values[i]
+        value = float(values[i])
         data['Network'][header_str] = value
 
 # Save to json
