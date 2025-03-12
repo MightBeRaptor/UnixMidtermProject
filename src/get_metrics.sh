@@ -20,7 +20,6 @@ free -m | grep -E "total|Mem:" >> "$filename"
 # Expected data:
 #                total        used        free      shared  buff/cache   available
 #Mem:             969         492         283           0         344         477
-#Swap:              0           0           0
 
 # DISK
 df -h | grep -E "Filesystem|sda" >> "$filename"
