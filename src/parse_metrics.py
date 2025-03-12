@@ -111,7 +111,15 @@ for i in range(len(column_headers)):
     data['Memory'][header_str] = value
 
 # Disk
-print(disk_lines)
+data['Disk'] = dict()
+column_headers = disk_lines[0].replace('Mounted on', 'Mounted-on').strip().split() # 'Filesystem Size Used' -> ['Size', 'Used']
+value_headers = disk_lines[1].strip().split() # '/dev/sda1  20G  10G' -> ['20G', '10G']
+for i in range(len(column_headers)):
+    header_str = column_headers[i]
+    if header_str in ['Mounted-on', 'Filesystem']:
+        continue #skip
+    value = value_headers[i]
+    data['Disk'][header_str] = value
 
     
 

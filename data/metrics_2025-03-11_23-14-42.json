@@ -16,5 +16,11 @@
         "Shared": 0,
         "Buffer/Cache": 442,
         "Available": 500
+    },
+    "Disk": {
+        "Size": "9.7G",
+        "Used": "2.7G",
+        "Avail": "6.5G",
+        "Use%": "30%"
     }
 }
