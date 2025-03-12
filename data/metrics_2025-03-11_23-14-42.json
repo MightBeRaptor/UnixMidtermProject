@@ -46,5 +46,11 @@
         "Flush Request Average Wait Time": "0.05",
         "Average Queue Size": "0.06",
         "Percentage of CPU Utilization": "0.31"
+    },
+    "Network": {
+        "ens5 KB/s incoming": "0.00",
+        "ens5 KB/s outgoing": "0.00",
+        "ens4 KB/s incoming": "0.00",
+        "ens4 KB/s outgoing": "0.00"
     }
 }

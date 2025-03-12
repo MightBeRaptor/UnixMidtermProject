@@ -42,6 +42,7 @@ cpu_line = None
 mem_lines = []
 disk_lines = []
 disk_io_lines = []
+network_lines = []
 
 previous_line = None
 for line in lines:
@@ -58,9 +59,9 @@ for line in lines:
     if line.startswith('Device') or line.startswith('sda'):
         disk_io_lines.append(line)
 
-
-
     previous_line = line
+
+network_lines = lines[-3:] #last 3
 
 # CPU
 # Expected data
@@ -182,7 +183,46 @@ for i in range(len(column_headers)):
     value = values[i]
     data['Disk I/O'][header_str] = value
 
+# Network
+# Expected data:
+#        ens5                ens4       
+# KB/s in  KB/s out   KB/s in  KB/s out
+#    0.00      0.00      0.00      0.00
 
+# parse into
+# {
+#     'Network': {
+#                 'ens5 KB/s incoming': 0.00,
+#                 'ens5 KB/s outgoing': 0.00,
+#                }
+# }
+data['Network'] = dict()
+ens = network_lines[0].strip().split() # 'ens5 ens4' -> ['ens5', 'ens4']
+units = network_lines[1].strip().split() # 'KB/s in KB/s out' -> ['KB/s', 'in', 'KB/s', 'out]
+unit_map = {
+    'in': 'incoming',
+    'out': 'outgoing'
+}
+for i, unit in enumerate(units): # ['KB/s', 'in', 'KB/s', 'out'] -> ['KB/s incoming', 'KB/s outgoing']
+    if unit in ['in', 'out']:
+        units[i-1] += ' ' + unit_map[unit]
+        units.pop(i)
+
+values = network_lines[2].strip().split() # '0.00 0.00' -> ['0.00', '0.00']
+print(ens, units, values)
+
+if not (len(units) == len(values)):
+    raise ValueError('Number of ens''s, units, and values are not equal for Network data')
+
+# ['ens5', 'ens4'] ['KB/s incoming', 'KB/s outgoing', 'KB/s incoming', 'KB/s outgoing'] ['0.00', '0.00', '0.00', '0.00']
+# -> 
+# ens5 KB/s incoming: 0.00,
+for i in range(len(ens)):
+    units_per_ens = int(int(len(units))/int(len(ens)))
+    for j in range(units_per_ens):
+        header_str = f'{ens[i]} {units[j]}'
+        value = values[i]
+        data['Network'][header_str] = value
 
 # Save to json
 json_path = os.path.join(data_dir, f'metrics_{date}.json')

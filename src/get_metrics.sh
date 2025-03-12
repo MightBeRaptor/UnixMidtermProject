@@ -41,7 +41,3 @@ ifstat 1 1 >> "$filename"
 #      ens5                ens4       
 #KB/s in  KB/s out   KB/s in  KB/s out
 #   0.00      0.00      0.06      0.19
-
-# kb/s = kilobytes per second
-# in = incoming
-# out = outgoing
