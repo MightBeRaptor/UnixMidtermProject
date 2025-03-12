@@ -41,6 +41,7 @@ cpu_code_map = {
 cpu_line = None
 mem_lines = []
 disk_lines = []
+disk_io_lines = []
 
 previous_line = None
 for line in lines:
@@ -54,6 +55,8 @@ for line in lines:
         mem_lines.append(line)
     if line.startswith('Filesystem') or line.startswith('/dev/sda1') and not line.startswith('/dev/sda15'):
         disk_lines.append(line)
+    if line.startswith('Device') or line.startswith('sda'):
+        disk_io_lines.append(line)
 
 
 
@@ -133,7 +136,51 @@ for i in range(len(column_headers)):
     data['Disk'][header_str] = value
 
     
+# Disk I/O
+# Expected data:
+# Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util
+# sda              2.32     57.09     0.15   5.99    0.96    24.61    2.25    160.07     0.62  21.74   26.21    71.25    0.03    239.88     0.00   0.00    0.39  7834.06    0.19    0.05    0.06   0.30
 
+# parse into
+# {
+#    'Disk I/O': {
+#                'r/s': '2.32',
+#                }
+# }
+data['Disk I/O'] = dict()
+disk_io_code_map = {
+    'r/s': 'Read Requests per Second',
+    'rkB/s': 'Read Kilobytes per Second',
+    'rrqm/s': 'Read Requests Merged per Second',
+    '%rrqm': 'Percentage of Read Requests Merged',
+    'r_await': 'Read Request Average Wait Time',
+    'rareq-sz': 'Read Request Average Size',
+    'w/s': 'Write Requests per Second',
+    'wkB/s': 'Write Kilobytes per Second',
+    'wrqm/s': 'Write Requests Merged per Second',
+    '%wrqm': 'Percentage of Write Requests Merged',
+    'w_await': 'Write Request Average Wait Time',
+    'wareq-sz': 'Write Request Average Size',
+    'd/s': 'Discard Requests per Second',
+    'dkB/s': 'Discard Kilobytes per Second',
+    'drqm/s': 'Discard Requests Merged per Second',
+    '%drqm': 'Percentage of Discard Requests Merged',
+    'd_await': 'Discard Request Average Wait Time',
+    'dareq-sz': 'Discard Request Average Size',
+    'f/s': 'Flush Requests per Second',
+    'f_await': 'Flush Request Average Wait Time',
+    'aqu-sz': 'Average Queue Size',
+    '%util': 'Percentage of CPU Utilization'
+}
+column_headers = disk_io_lines[0].strip().split() # 'Device r/s' -> ['Device', 'r/s']
+values = disk_io_lines[1].strip().split() # 'sda 2.32' -> ['sda', '2.32']
+for i in range(len(column_headers)):
+    header_code = column_headers[i]
+    if header_code in ['Device']:
+        continue #skip
+    header_str = disk_io_code_map[header_code]
+    value = values[i]
+    data['Disk I/O'][header_str] = value
 
 
 
