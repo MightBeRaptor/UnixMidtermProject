@@ -77,7 +77,7 @@ for element in cpu_data:
 #                 'total': 969,
 #              }
 # }
-data['Memory'] = dict()
+data['Memory (MB)'] = dict()
 column_headers = mem_lines[0].strip().split() #' total used free ' -> ['total', 'used', 'free']
 values = mem_lines[1].strip().split('Mem:')[1].strip().split() #'Mem: 969 469' -> ['969', '469']
 if len(column_headers) != len(values):
@@ -94,7 +94,7 @@ for i in range(len(column_headers)):
     header_code = column_headers[i]
     header_str = mem_code_map[header_code]
     value = int(values[i])
-    data['Memory'][header_str] = value
+    data['Memory (MB)'][header_str] = value
 
 # Disk
 # Expected data:
@@ -111,12 +111,20 @@ for i in range(len(column_headers)):
 data['Disk'] = dict()
 column_headers = disk_lines[0].replace('Mounted on', 'Mounted-on').strip().split() # 'Filesystem Size Used' -> ['Filesystem', 'Size', 'Used']
 value_headers = disk_lines[1].strip().split() # '/dev/sda1  20G  10G' -> ['/dev/sda1', '20G', '10G']
+disk_code_map = {
+    'Size': 'Size (G)',
+    'Used': 'Used (G)',
+    'Avail': 'Available (G)',
+    'Use%': 'Use %'
+}
 for i in range(len(column_headers)):
-    header_str = column_headers[i]
-    if header_str in ['Mounted-on', 'Filesystem']:
+    header_code = column_headers[i]
+    if header_code in ['Mounted-on', 'Filesystem']:
         continue #skip
+    header_str = disk_code_map[header_code]
+    
     value = value_headers[i]
-    data['Disk'][header_str] = value
+    data['Disk'][header_str] = float(value.replace('G', '').replace('%', ''))
 
     
 # Disk I/O
