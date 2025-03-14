@@ -18,9 +18,9 @@ This server is designed to be cloned into a GCP Google Cloud Ubuntu VM instance.
 ## Starting the server socket
 1. The crontab will start the server (if its not already up) with `python src/server.py`    
 2. Every 5 minutes of the dashboard's runtime, it will request the server to run:
-    2.1. `bash src/stresser.sh` - Stresses the server
-    2.2. `bash src/get_metrics.sh` - Retrieve's metrics and writes them to `data/metrics_<timestamp>.txt`
-    2.3. `python3 src/parse_metrics.py` - Parses the metrics from the raw txt into a readable json format in `data/metrics_<timestamp>.json`
-    2.4. WIP: sends `data/metrics_<timestamp.json` back to the dashboard at `data/serverN/metrics_<timestamp>.json`, where serverN is the server_name from `.env`
+    1. `bash src/stresser.sh` - Stresses the server
+    2. `bash src/get_metrics.sh` - Retrieve's metrics and writes them to `data/metrics_<timestamp>.txt`
+    3. `python3 src/parse_metrics.py` - Parses the metrics from the raw txt into a readable json format in `data/metrics_<timestamp>.json`
+    4. WIP: sends `data/metrics_<timestamp.json` back to the dashboard at `data/serverN/metrics_<timestamp>.json`, where serverN is the server_name from `.env`
 3. When the server is no longer connected to the dashboard, it will run
-    3.1. WIP `rm tmp/socket_status.txt` - To ensure the next time its started its not using the previous session's status
+    1. WIP `rm tmp/socket_status.txt` - To ensure the next time its started its not using the previous session's status
