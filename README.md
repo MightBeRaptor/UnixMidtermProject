@@ -13,7 +13,8 @@ This server is designed to be cloned into a GCP Google Cloud Ubuntu VM instance.
 3. Create `.env` using `.env.example` as a guide
 4. `bash src/update_dependencies.sh` - Installs dependencies for checking metrics and stressing the server
 5. `bash src/add_user_groups.sh` - Creates user and groups for the server to be added to
-6. WIP `bash src/add_crontab.sh` - Adds a crontab entry that WIP runs `bash src/get_socket_status.sh` every 5 minutes which saves the socket's current status to `tmp/socket_status.txt` and restarts `python src/server.py`
+6. `bash src/systemd_setup.sh` - Creates systemd file for the stresser. This will cause it to always run stresser for a random amount of seconds.
+7. WIP `bash src/add_crontab.sh` - Adds a crontab entry that WIP runs `bash src/get_socket_status.sh` every 5 minutes which saves the socket's current status to `tmp/socket_status.txt` and restarts `python src/server.py`
 
 ## Starting the server socket
 1. The crontab will start the server (if its not already up) with `python src/server.py`    
@@ -24,3 +25,10 @@ This server is designed to be cloned into a GCP Google Cloud Ubuntu VM instance.
     4. WIP: sends `data/metrics_<timestamp.json` back to the dashboard at `data/serverN/metrics_<timestamp>.json`, where serverN is the server_name from `.env`
 3. When the server is no longer connected to the dashboard, it will run
     1. WIP `rm tmp/socket_status.txt` - To ensure the next time its started its not using the previous session's status
+
+
+## Disable Stresser
+If the stresser.service becomes problematic, it can be disabled using the following commands:
+1. `sudo systemctl disable stresser.service` - This prevents launch on boot
+2. `sudo systemctl stop stresser.service` - This stops the stresser.service from working
+3. `systemctl status stresser.service` - This command can confirm the status of stresser.service and make sure it is disabled
