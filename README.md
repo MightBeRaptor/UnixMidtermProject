@@ -13,7 +13,7 @@ This server is designed to be cloned into a GCP Google Cloud Ubuntu VM instance,
 3. `bash src/update_dependencies.sh` - Installs dependencies for checking metrics and stressing the server
 4. `bash src/add_user_groups.sh` - Creates user and groups for the server to be added to
 5. `bash src/systemd_setup.sh` - Creates systemd file for the stresser. This will cause it to always run stresser for a random amount of seconds.
-6. `bash src/add_crontab.sh` - Adds a crontab entry that WIP runs `bash src/get_socket_status.sh` every 5 minutes which saves the socket's current status to `tmp/socket_status.txt` and restarts `python src/server.py`
+6. `bash src/add_crontab.sh` - Adds a crontab entry that runs `python src/server.py` every 5 minutes
 
 ## Starting the server socket
 1. The crontab will start the server (if its not already up) with `python src/server.py`    
