@@ -15,7 +15,7 @@ StandardOutput=journal
 StandardError=journal
 
 [Install]
-WantedBy=multi-user.target" | sudo tee  > /dev/null
+WantedBy=multi-user.target" | sudo tee $SERVICE_NAME > /dev/null
 
 sudo chmod +x src/stresser.sh
 
