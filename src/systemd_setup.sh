@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SERVICE_PATH="/etc/systemd/system/stresser.service"
+SERVICE_NAME="stresser.service"
+SERVICE_PATH="/etc/systemd/system/$SERVICE_NAME"
 
 echo "[Unit]
 Description=Cause stress on the system
@@ -15,7 +16,7 @@ StandardOutput=journal
 StandardError=journal
 
 [Install]
-WantedBy=multi-user.target" | sudo tee $SERVICE_NAME > /dev/null
+WantedBy=multi-user.target" | sudo tee $SERVICE_PATH > /dev/null
 
 sudo chmod +x src/stresser.sh
 
