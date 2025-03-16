@@ -2,6 +2,7 @@ import socket
 import subprocess
 import os
 import json
+import struct
 
 
 class Server:
@@ -42,16 +43,20 @@ class Server:
                             json_data = json.load(f)
                         print("[*] JSON file opened, parsing data")
                         json_str = json.dumps(json_data)
-                        print("[*] Sending the data to client")
-                        for i in range(0, len(json_str), 1024):
-                            chunk = json_str[i:i + 1024]
-                            connection.sendall(chunk.encode('utf-8'))
+                        json_bytes = json_str.encode('utf-8')
+
+                        # Send the length of the JSON first (4 bytes)
+                        connection.sendall(struct.pack('!I', len(json_bytes)))
+
+                        # Send the JSON data in chunks
+                        for i in range(0, len(json_bytes), 1024):
+                            chunk = json_bytes[i:i + 1024]
+                            connection.sendall(chunk)
                 except Exception as e:
                     print(f"[*] Connection error: {e}")
                     break
                 finally:
                     connection.close()
-                    server_tcp.close()
                     print("[*] Connection closed, waiting for new client")
 
 
