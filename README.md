@@ -32,4 +32,5 @@ If the stresser.service becomes problematic, it can be disabled using the follow
 1. `sudo systemctl disable stresser.service` - Prevents launch on boot
 2. `sudo systemctl stop stresser.service` - Stops the stresser.service from working
 3. `systemctl status stresser.service` - Displays the status of stresser.service to make sure it is disabled
+4. `pkill -9 stress-ng` - Ends the currently running stress process
 To renable this service, run the command `bash src/systemd_setup.sh`
