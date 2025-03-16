@@ -6,6 +6,11 @@ import json
 
 # Print the name of the only txt file in data dir
 data_dir = 'data'
+
+# Ensure data dir exists
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
+
 metrics_path = None
 for file in os.listdir(data_dir):
     if file.endswith('.txt'):
@@ -217,5 +222,8 @@ for i in range(len(ens)):
 json_path = os.path.join(data_dir, f'metrics_{date}.json')
 with open(json_path, 'w', encoding='utf-8') as f:
     json.dump(data, f, indent=4)
+
+# Remove the file
+os.remove(metrics_path)
 
 print(date)

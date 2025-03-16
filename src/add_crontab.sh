@@ -1,2 +1,2 @@
 # Add src/get_socket_status.sh to crontab to run every 5 mins
-crontab -l | { cat; echo "*/5 * * * * /bin/bash /home/your-username/Downloads/agent/src/get_socket_status.sh"; } | crontab - 
+crontab -l | { cat; echo "*/5 * * * * /usr/bin/python3 /home/etg1717/UnixMidtermServer/src/server.py >> /home/etg1717/server.log 2>&1"; } | crontab - 
