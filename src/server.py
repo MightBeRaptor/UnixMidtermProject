@@ -17,17 +17,17 @@ class Server:
             server_tcp.listen(1)  # Allow up to 1 connection
             print("[*] Waiting for connection")
             while True:
-                try:
+                try: # attempt to connect to client
                     connection, addr = server_tcp.accept()
                     print(f"[*] Connection from {addr}")
-                    while True:
+                    while True: # receive the commands to execute from client
                         data = connection.recv(1024).decode('utf-8')
                         if not data:
                             break
                         print(f"Received data from {addr}: {data}")
                         commands = data.split(":")
                         print(commands)
-                        parse_cmd = commands[0].split()
+                        parse_cmd = commands[0].split() # run the first command
                         subprocess.run([parse_cmd[0], parse_cmd[1]])
                         # Execute commands
                         # Run parse_metrics.py to get a json file at /data/*filename*.json
@@ -36,7 +36,9 @@ class Server:
                         metrics_path = [entry.name for entry in os.scandir("data") if entry.is_file()]
                         os.makedirs(os.path.join("data", socket.gethostname()), exist_ok=True)
                         os.rename("data/" + metrics_path[0], "data/" + socket.gethostname() + "/" + metrics_path[0])
+                        # send the file path and name to the client
                         connection.sendall(("data/" + socket.gethostname() + "/" + metrics_path[0]).encode('utf-8'))
+                        # open the json file and read the contents
                         json_file = str("data/" + socket.gethostname() + "/" + metrics_path[0])
                         print("[*] Opening json file")
                         with open(json_file, "r") as f:
@@ -45,17 +47,17 @@ class Server:
                         json_str = json.dumps(json_data)
                         json_bytes = json_str.encode('utf-8')
 
-                        # Send the length of the JSON first (4 bytes)
+                        # send the length of the JSON first (4 bytes)
                         connection.sendall(struct.pack('!I', len(json_bytes)))
 
-                        # Send the JSON data in chunks
+                        # send the JSON data in chunks
                         for i in range(0, len(json_bytes), 1024):
                             chunk = json_bytes[i:i + 1024]
                             connection.sendall(chunk)
-                except Exception as e:
+                except Exception as e: # error handling
                     print(f"[*] Connection error: {e}")
                     break
-                finally:
+                finally: # close connection if an error occurs
                     connection.close()
                     print("[*] Connection closed, waiting for new client")
 
