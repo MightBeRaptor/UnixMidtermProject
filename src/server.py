@@ -31,10 +31,11 @@ class Server:
                         subprocess.run([parse_cmd[0], parse_cmd[1]])
                         # Execute commands
                         # Run parse_metrics.py to get a json file at /data/*filename*.json
+                        subprocess.run(["python3", "UnixMidtermServer/src/parse_metrics.py"])
                         # Rename the json to /data/*servername*/*filename*.json
-                        metrics_path = [entry.name for entry in os.scandir("data") if entry.is_file()]
-                        os.makedirs(os.path.join("data", socket.gethostname()), exist_ok=True)
-                        os.rename("data/" + metrics_path[0], "data/" + socket.gethostname() + "/" + metrics_path[0])
+                        metrics_path = [entry.name for entry in os.scandir("UnixMidtermServer/data") if entry.is_file()]
+                        os.makedirs(os.path.join("UnixMidtermServer/data", socket.gethostname()), exist_ok=True)
+                        os.rename("UnixMidtermServer/data/" + metrics_path[0], "data/" + socket.gethostname() + "/" + metrics_path[0])
                         # send the file path and name to the client
                         connection.sendall(("data/" + socket.gethostname() + "/" + metrics_path[0]).encode('utf-8'))
                         # open the json file and read the contents
